@@ -35,9 +35,9 @@ class FontStore
         offset = row * 256*16*3 + col*8*3
         0.upto(15) do |y|
           0.upto(7) do |x|
-            font_data[offset + y*256*3 + x*3 +0] = @font[c][y*8*3 + x*3 + 0].ord
-            font_data[offset + y*256*3 + x*3 +1] = @font[c][y*8*3 + x*3 + 1].ord
-            font_data[offset + y*256*3 + x*3 +2] = @font[c][y*8*3 + x*3 + 2].ord
+            font_data[offset + y*256*3 + x*3 +0] = @font[c][y*8*3 + x*3 + 0]
+            font_data[offset + y*256*3 + x*3 +1] = @font[c][y*8*3 + x*3 + 1]
+            font_data[offset + y*256*3 + x*3 +2] = @font[c][y*8*3 + x*3 + 2]
           end
         end
 

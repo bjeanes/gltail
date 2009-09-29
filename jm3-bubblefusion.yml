@@ -34,13 +34,13 @@ config:
                 show: total
             hosts:
                 order: 1
-                size: 3
+                size: 15
             sites:
                 order: 2
                 size: 10
             content:
                 order: 3
-                size: 5
+                size: 10
                 show: total
                 color: 1.0, 0.8, 0.4, 1.0
             status:
@@ -73,17 +73,17 @@ config:
         blocks:
             urls:
                 order: 0
-                size: 15
+                size: 30
             slow requests:
                 order: 1
-                size: 5
+                size: 10
                 show: average
             referrers:
                 order: 2
                 size: 10
             user agents:
                 order: 3
-                size: 5
+                size: 10
                 color: 1.0, 1.0, 1.0, 1.0
             mail from:
                 order: 4
