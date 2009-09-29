@@ -15,7 +15,7 @@ servers:
         keys: ['/Volumes/Apricot/Crypt/SSH/bubblefusion_rsa', '~/.ssh/id_rsa', '~/.ssh/id_rsa-topfans']
         command: tail -f -n0
         files:  /srv/sayplus1.com/shared/log/production.log
-        parser: rails
+        parser: sayplus1
         color: 0.2, 1.0, 0.2, 1.0
 config:
     dimensions: 1200x600
