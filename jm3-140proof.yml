@@ -83,7 +83,7 @@ config:
                 order: 3
             audience:
                 order: 5
-                size: 25
+                size: 20
             warnings:
                 order: 6
             servers:
