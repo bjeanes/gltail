@@ -1,0 +1,93 @@
+servers:
+
+#    argon_rails:
+#        files: /srv/api.bubblefusionlabs.com/shared/log/production.log
+#        parser: onefortyproof
+
+    argon:
+        host: argon.sayplus1.com
+        port: 22
+        user: jm3
+        keys: ['/Volumes/Apricot/Crypt/SSH/bubblefusion_rsa']
+        command: tail -f -n0
+        files: /var/log/apache2/api.bubblefusionlabs.com-access.log
+        parser: apache
+        color: cyan
+
+    neon:
+        host: neon.sayplus1.com
+        port: 22
+        user: jm3
+        keys: ['/Volumes/Apricot/Crypt/SSH/bubblefusion_rsa']
+        command: tail -f -n0
+        files: /var/log/apache2/api.bubblefusionlabs.com-access.log
+        parser: apache
+        color: magenta
+
+    xenon:
+        host: xenon.sayplus1.com
+        port: 22
+        user: jm3
+        keys: ['/Volumes/Apricot/Crypt/SSH/bubblefusion_rsa']
+        command: tail -f -n0
+        files: /var/log/apache2/api.bubblefusionlabs.com-access.log
+        parser: apache
+        color: orange
+
+config:
+    dimensions: 1100x600
+    min_blob_size: 0.001
+    max_blob_size: 0.02
+    highlight_color: orange
+    bounce: true
+    left_column:
+        size: 25
+        alignment: -0.99
+        blocks:
+            impressions:
+                order: 0
+                auto_clean: true
+                show: total
+            clicks:
+                order: 1
+                show: total
+            retweets:
+                order: 2
+                show: total
+            replies:
+                order: 3
+                show: total
+                color: 1.0, 0.8, 0.4, 1.0
+            favorites:
+                order: 4
+                color: 1.0, 0.8, 0.4, 1.0
+                show: total
+            requests:
+                order: 5
+                color: 1.0, 0.4, 0.2, 1.0
+                show: total
+
+    right_column:
+        size: 25
+        alignment: 0.99
+        blocks:
+            activity:
+                order: 0
+            app:
+                order: 1
+            platform:
+                order: 2
+                size: 10
+                color: 1.0, 0.2, 0.2, 1.0
+            device:
+                order: 3
+            audience:
+                order: 5
+                size: 25
+            warnings:
+                order: 6
+            servers:
+                order: 7
+resolver:
+    reverse_ip_lookups: true
+    reverse_timeout: 0.5

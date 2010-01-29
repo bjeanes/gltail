@@ -7,6 +7,7 @@
 # Parser which handles access_logs in combined format from Apache
 class ApacheParser < Parser
   def parse( line )
+
     _, host, user, domain, date, url, status, size, referrer, useragent = /([\d\S.]+) (\S+) (\S+) \[([^\]]+)\] \"(.+?)\" (\d+) ([\S]+) \"([^\"]+)\" \"([^\"]+)\"/.match(line).to_a
 
     unless host
@@ -21,11 +22,38 @@ class ApacheParser < Parser
 
       referrer.gsub!(/http:\/\//,'') if referrer
 
-      add_activity(:block => 'sites', :name => server.name, :size => size.to_i) # Size of activity based on size of request
-      add_activity(:block => 'urls', :name => url)
-      add_activity(:block => 'users', :name => host, :size => size.to_i)
+      add_activity(:block => 'servers', :name => server.name, :size => size.to_i) # Size of activity based on size of request
+
+      short_url = case url
+         when %r{/ads/user\.(xml|json)} then 'ad served'
+         when %r{/impressions/verify\.(xml|json)} then 'ad shown'
+         when %r{/clicks/create\.(xml|json)} then 'ad clicked'
+         when %r{/test/ads\.(xml|json)} then 'developer test'
+         else nil # suppress everything else
+       end
+
+      add_activity(:block => 'activity', :name => short_url) if short_url
+      
+      add_activity(:block => 'requests', :name => 'app requests')
+
+      screen_name = "jm3"
+      if parameters
+        screen_name = parameters.split( /^.*user_id=([\w\d]+)&/ )[1]
+      end
+      add_activity(:block => 'audience', :name => "@#{screen_name}") if screen_name
+      
+      publisher = "yankly"
+      if parameters
+        publisher = parameters.split( /^.*publisher_id=([\w\d]+)&/ )[1]
+      end
+      add_activity(:block => 'app', :name => publisher) if publisher
+
       add_activity(:block => 'referrers', :name => referrer) unless (referrer.nil? || referrer_host.nil? || referrer_host.include?(server.name) || referrer_host.include?(server.host))
-      add_activity(:block => 'user agents', :name => HttpHelper.parse_useragent(useragent), :type => 3) unless useragent.nil?
+
+      ua = useragent || "unknown"
+      ua.gsub!(/\/.*$/, '')
+      ua.gsub!(/Black[Bb]erry(\d+.*$)/, "Blackberry #{$1}")
+      add_activity(:block => 'platform', :name => ua) if ua.include?( 'Black' ) # once you go black...
 
       if( url.include?('.gif') || url.include?('.jpg') || url.include?('.png') || url.include?('.ico'))
         type = 'image'
@@ -42,15 +70,21 @@ class ApacheParser < Parser
       else
         type = 'page'
       end
-      add_activity(:block => 'content', :name => type)
+
+      add_activity(:block => 'impressions', :name => 'Raw') if url.include?('/ads/user.')
+      add_activity(:block => 'impressions', :name => 'Verified') if url.include?('/impressions/verify.')
+      
+      add_activity(:block => 'clicks', :name => 'Verified') if url.include?('/clicks/create.')
+      add_activity(:block => 'retweets', :name => 'Verified') if url.include?('/retweets/verify.')
+      add_activity(:block => 'favorites', :name => 'Verified') if url.include?('/favorites/verify.')
+      add_activity(:block => 'replies', :name => 'Verified') if url.include?('/replies/verify.')
+
       add_activity(:block => 'status', :name => status, :type => 3) # don't show a blob
 
       add_activity(:block => 'warnings', :name => "#{status}: #{url}") if status.to_i > 400
 
       # Events to pop up
-      add_event(:block => 'info', :name => "Logins", :message => "Login...", :update_stats => true, :color => [1.5, 1.0, 0.5, 1.0]) if method == "POST" && url.include?('login')
-      add_event(:block => 'info', :name => "Sales", :message => "$", :update_stats => true, :color => [1.5, 0.0, 0.0, 1.0]) if method == "POST" && url.include?('/checkout')
-      add_event(:block => 'info', :name => "Signups", :message => "New User...", :update_stats => true, :color => [1.0, 1.0, 1.0, 1.0]) if( method == "POST" && (url.include?('/signup') || url.include?('/users/create')))
+      #add_event(:block => 'info', :name => "Logins", :message => "Login...", :update_stats => true, :color => [1.5, 1.0, 0.5, 1.0]) if method == "POST" && url.include?('login')
     end
   end
 end
