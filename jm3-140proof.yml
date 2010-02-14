@@ -1,16 +1,11 @@
 servers:
-
-#    argon_rails:
-#        files: /srv/api.bubblefusionlabs.com/shared/log/production.log
-#        parser: onefortyproof
-
     argon:
         host: argon.sayplus1.com
         port: 22
         user: jm3
         keys: ['/Volumes/Apricot/Crypt/SSH/bubblefusion_rsa']
         command: tail -f -n0
-        files: /var/log/apache2/api.bubblefusionlabs.com-access.log
+        files: /var/log/apache2/api.140proof.com-access.log
         parser: apache
         color: cyan
 
@@ -20,7 +15,7 @@ servers:
         user: jm3
         keys: ['/Volumes/Apricot/Crypt/SSH/bubblefusion_rsa']
         command: tail -f -n0
-        files: /var/log/apache2/api.bubblefusionlabs.com-access.log
+        files: /var/log/apache2/api.140proof.com-access.log
         parser: apache
         color: magenta
 
@@ -30,7 +25,7 @@ servers:
         user: jm3
         keys: ['/Volumes/Apricot/Crypt/SSH/bubblefusion_rsa']
         command: tail -f -n0
-        files: /var/log/apache2/api.bubblefusionlabs.com-access.log
+        files: /var/log/apache2/api.140proof.com-access.log
         parser: apache
         color: orange
 
