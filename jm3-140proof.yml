@@ -6,7 +6,7 @@ servers:
         keys: ['/Volumes/Apricot/Crypt/SSH/bubblefusion_rsa']
         command: tail -f -n0
         files: /var/log/apache2/api.140proof.com-access.log
-        parser: apache
+        parser: onefortyproof
         color: cyan
 
     neon:
@@ -16,7 +16,7 @@ servers:
         keys: ['/Volumes/Apricot/Crypt/SSH/bubblefusion_rsa']
         command: tail -f -n0
         files: /var/log/apache2/api.140proof.com-access.log
-        parser: apache
+        parser: onefortyproof
         color: magenta
 
     xenon:
@@ -26,7 +26,7 @@ servers:
         keys: ['/Volumes/Apricot/Crypt/SSH/bubblefusion_rsa']
         command: tail -f -n0
         files: /var/log/apache2/api.140proof.com-access.log
-        parser: apache
+        parser: onefortyproof
         color: orange
 
 config:

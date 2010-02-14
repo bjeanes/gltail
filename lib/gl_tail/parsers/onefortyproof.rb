@@ -1,103 +1,82 @@
-# gl_tail.rb - OpenGL visualization of your server traffic
-# Copyright 2007 Erlend Simonsen <mr@fudgie.org>
-#
-# Licensed under the GNU General Public License v2 (see LICENSE)
-#
-# Hacked the fuck up by @jm3, 2010
-
-# Parser which handles Rails access logs
+# Parser for the 140 Proof API, based on the Apache parser
 class OnefortyproofParser < Parser
   def parse( line )
-    #Completed in 0.02100 (47 reqs/sec) | Rendering: 0.01374 (65%) | DB: 0.00570 (27%) | 200 OK [http://example.com/whatever/whatever]
-    if matchdata = /^Completed in ([\d.]+) .* \[([^\]]+)\]/.match(line)
-    	_, ms, url = matchdata.to_a
-      url = nil if url == "http:// /" # mod_proxy health checks?
-    #Rails 2.2.2+: Completed in 17ms (View: 0, DB: 11) | 200 OK [http://example.com/etc/etc]
-    elsif matchdata = /^Completed in ([\d]+)ms .* \[([^\]]+)\]/.match(line)
-    	_, new_ms, url = matchdata.to_a
-	ms = new_ms.to_f / 1000
-	url = nil if url == "http:// /" # mod_proxy health checks?
+
+    _, host, user, domain, date, url, status, size, referrer, useragent = /([\d\S.]+) (\S+) (\S+) \[([^\]]+)\] \"(.+?)\" (\d+) ([\S]+) \"([^\"]+)\" \"([^\"]+)\"/.match(line).to_a
+
+    unless host
+      _, host, user, domain, date, url, status, size = /([\d\S.]+) (\S+) (\S+) \[([^\]]+)\] \"(.+?)\" (\d+) ([\S]+)/.match(line).to_a
     end
 
-    if url
-      _, host, url = /^http[s]?:\/\/([^\/]*)(.*)/.match(url).to_a
-      host.gsub!(/bubblefusionlabs/, '140proof')
+    if host
+      _, referrer_host, referrer_url = /^http[s]?:\/\/([^\/]+)(\/.*)/.match(referrer).to_a if referrer
+      method, url, http_version = url.split(" ")
+      url = method if url.nil?
+      url, parameters = url.split('?')
 
-      add_activity(:block => 'sites', :name => host, :size => ms.to_f) # Size of activity based on request time.
+      referrer.gsub!(/http:\/\//,'') if referrer
 
-      # humanize urls:
+      add_activity(:block => 'servers', :name => server.name, :size => size.to_i) # Size of activity based on size of request
+
       short_url = case url
          when %r{/ads/user\.(xml|json)} then 'ad served'
          when %r{/impressions/verify\.(xml|json)} then 'ad shown'
+         when %r{/clicks/create\.(xml|json)} then 'ad clicked'
          when %r{/test/ads\.(xml|json)} then 'developer test'
-         else url
+         else nil # suppress everything else
        end
 
-      add_activity(:block => 'urls', :name => short_url, :size => ms.to_f)
-      add_activity(:block => 'slow requests', :name => short_url, :size => ms.to_f)
-      add_activity(:block => 'content', :name => 'ads served')
+      add_activity(:block => 'activity', :name => short_url) if short_url
+      
+      add_activity(:block => 'requests', :name => 'app requests')
 
-      # /ads/user.json?
-      add_event(
-        :block => 'impressions',
-        :name => "Raw",
-        :message => "",
-        :update_stats => true,
-        :color => [0.5, 1.0, 0.5, 1.0]) if url.include?('/ads/user.')
+      screen_name = "jm3"
+      if parameters
+        screen_name = parameters.split( /^.*user_id=([\w\d]+)&/ )[1]
+      end
+      add_activity(:block => 'audience', :name => "@#{screen_name}") if screen_name
+      
+      publisher = "yankly"
+      if parameters
+        publisher = parameters.split( /^.*publisher_id=([\w\d]+)&/ )[1]
+      end
+      add_activity(:block => 'app', :name => publisher) if publisher
 
-      # /impressions/verify.json?
-      add_event(
-        :block => 'impressions',
-        :name => "Verified",
-        :message => "",
-        :update_stats => true,
-        :color => [0.5, 1.0, 0.5, 1.0]) if url.include?('/impressions/verify.')
+      add_activity(:block => 'referrers', :name => referrer) unless (referrer.nil? || referrer_host.nil? || referrer_host.include?(server.name) || referrer_host.include?(server.host))
 
-      # /retweets/verify.json?
-      add_event(
-        :block => 'retweets',
-        :name => "Verified ReTweets",
-        :message => "",
-        :update_stats => true,
-        :color => [0.5, 1.0, 0.5, 1.0]) if url.include?('/retweets/verify.')
+      ua = useragent || "unknown"
+      ua.gsub!(/\/.*$/, '')
+      ua.gsub!(/Black[Bb]erry(\d+.*$)/, "Blackberry #{$1}")
+      add_activity(:block => 'platform', :name => ua) if ua.include?( 'Black' ) # once you go black...
 
-      # /replies/verify.json?
-      add_event(
-        :block => 'replies',
-        :name => "Verified Replies",
-        :message => "",
-        :update_stats => true,
-        :color => [0.5, 1.0, 0.5, 1.0]) if url.include?('/replies/verify.')
-
-      # /favorites/verify.json?
-      add_event(
-        :block => 'favorites',
-        :name => "Verified Favorites",
-        :message => "",
-        :update_stats => true,
-        :color => [0.5, 1.0, 0.5, 1.0]) if url.include?('/favorites/verify.')
-
-    elsif line.include?('Processing ')
-      #Processing TasksController#update_sheet_info (for 123.123.123.123 at 2007-10-05 22:34:33) [POST]
-      _, host = /^Processing .* \(for (\d+.\d+.\d+.\d+) at .*\).*$/.match(line).to_a
-
-      if host
-        short_host = case host
-          when /^(\d{1,3}\.){3}\d{1,3}$/ then 'unknown IP'
-          when /blackberry.net/ then 'blackberry network'
-          else host
-         end
-        add_activity(:block => 'users', :name => short_host)
+      if( url.include?('.gif') || url.include?('.jpg') || url.include?('.png') || url.include?('.ico'))
+        type = 'image'
+      elsif url.include?('.css')
+        type = 'css'
+      elsif url.include?('.js')
+        type = 'javascript'
+      elsif url.include?('.swf')
+        type = 'flash'
+      elsif( url.include?('.avi') || url.include?('.ogm') || url.include?('.flv') || url.include?('.mpg') )
+        type = 'movie'
+      elsif( url.include?('.mp3') || url.include?('.wav') || url.include?('.fla') || url.include?('.aac') || url.include?('.ogg'))
+        type = 'music'
+      else
+        type = 'page'
       end
 
-    elsif line.include?('Error (')
-      _, error, msg = /^([^ ]+Error) \((.*)\):/.match(line).to_a
-      if error
-        add_event(:block => 'info', :name => "Exceptions", :message => error, :update_stats => true, :color => [1.0, 0.0, 0.0, 1.0])
-        add_event(:block => 'info', :name => "Exceptions", :message => msg, :update_stats => false, :color => [1.0, 0.0, 0.0, 1.0])
-        add_activity(:block => 'warnings', :name => msg)
+      add_activity(:block => 'impressions', :name => 'Raw') if url.include?('/ads/user.')
+      add_activity(:block => 'impressions', :name => 'Verified') if url.include?('/impressions/verify.')
+      
+      add_activity(:block => 'clicks', :name => 'Verified') if url.include?('/clicks/create.')
+      add_activity(:block => 'retweets', :name => 'Verified') if url.include?('/retweets/verify.')
+      add_activity(:block => 'favorites', :name => 'Verified') if url.include?('/favorites/verify.')
+      add_activity(:block => 'replies', :name => 'Verified') if url.include?('/replies/verify.')
 
-      end
+      add_activity(:block => 'status', :name => status, :type => 3) # don't show a blob
+
+      add_activity(:block => 'warnings', :name => "#{status}: #{url}") if status.to_i > 400
+
     end
   end
 end
