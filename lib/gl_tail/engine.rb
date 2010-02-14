@@ -203,8 +203,7 @@ module GlTail
       @config.screen.line_size = @config.screen.aspect * 2 / (@config.screen.window_height/13.0)
       @config.screen.top = @config.screen.aspect - @config.screen.line_size
 
-      puts "Reshape: #{width}x#{height} = #{@config.screen.aspect}/#{@config.screen.line_size}" if $VRB > 0
-
+      #puts "Reshape: #{width}x#{height} = #{@config.screen.aspect}/#{@config.screen.line_size}" if $VRB > 0
       glMatrixMode(GL_MODELVIEW)
       glLoadIdentity()
       glTranslate(0.0, 0.0, 0.0)
