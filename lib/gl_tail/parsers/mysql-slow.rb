@@ -23,9 +23,9 @@ class MysqlSlowParser < Parser
       add_activity(:block => 'rows', :name => 'examined', :size => rows_examined.to_i)
       # not sure how best to tally these: query_time,lock_time
     else
-      _, crud = /^(\w+)/.match(line).to_a
-      if crud =~ /\w+/
-        add_activity(:block => 'query_type', :name => crud, :size => 1)
+      _, query_type = /^(\w+)/.match(line).to_a
+      unless /\d+/.match(query_type)
+        add_activity(:block => 'query_type', :name => query_type, :size => 1)
         puts line
       end
     end
