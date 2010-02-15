@@ -1,0 +1,45 @@
+servers:
+    carbon:
+        host: carbon.sayplus1.com
+        port: 22
+        user: jm3
+        keys: ['/Volumes/Apricot/Crypt/SSH/bubblefusion_rsa']
+        command: tail -f -n0
+        files: /var/log/mysql/mysql-slow.log
+        parser: mysqlslow
+        color: cyan
+
+config:
+    dimensions: 1100x600
+    min_blob_size: 0.001
+    max_blob_size: 0.02
+    highlight_color: orange
+    bounce: true
+    left_column:
+        size: 25
+        alignment: -0.99
+        blocks:
+            queries:
+                order: 0
+                show: total
+            rows:
+                order: 1
+                color: 1.0, 0.4, 0.2, 1.0
+                show: total
+
+    right_column:
+        size: 25
+        alignment: 0.99
+        blocks:
+            query_type:
+                order: 0
+                size: 4
+                show: total
+                color: 1.0, 0.2, 0.2, 1.0
+            warnings:
+                order: 6
+            servers:
+                order: 7
+resolver:
+    reverse_ip_lookups: true
+    reverse_timeout: 0.5
