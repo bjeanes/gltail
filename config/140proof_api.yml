@@ -68,6 +68,7 @@ config:
         blocks:
             activity:
                 order: 0
+                auto_clean: true
             app:
                 order: 1
             platform:
@@ -84,5 +85,5 @@ config:
             servers:
                 order: 7
 resolver:
-    reverse_ip_lookups: true
+    reverse_ip_lookups: false
     reverse_timeout: 0.5
