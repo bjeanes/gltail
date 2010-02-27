@@ -16,7 +16,7 @@ class OnefortyproofParser < Parser
 
       referrer.gsub!(/http:\/\//,'') if referrer
 
-      if url =~ /favicon.ico/ or url =~ /^\/$/ or url =~ /^\/(stats|javascripts|stylesheets|test)/
+      if url =~ /favicon.ico/ or url =~ /^\/$/ or url =~ /^\/(stats|javascripts|stylesheets|images|test)/
         return
       end
 
