@@ -106,10 +106,8 @@ module GlTail
       if t - @t0 >= 10000
         seconds = (t - @t0) / 1000.0
         $FPS = @frames / seconds
-        printf("%d frames in %6.3f seconds = %6.3f FPS\n",
-        @frames, seconds, $FPS) if $VRB > 0
+        #printf("%d frames in %6.3f seconds = %6.3f FPS\n", @frames, seconds, $FPS) if $VRB > 0
         @t0, @frames = t, 0
-        puts "Elements[#{stats[0]}], Activities[#{stats[1]}], Blobs[#{BlobStore.used}/#{BlobStore.size}]" if $VRB > 0
       end
 
       @render_time = (Time.new - @t)
@@ -203,7 +201,6 @@ module GlTail
       @config.screen.line_size = @config.screen.aspect * 2 / (@config.screen.window_height/13.0)
       @config.screen.top = @config.screen.aspect - @config.screen.line_size
 
-      #puts "Reshape: #{width}x#{height} = #{@config.screen.aspect}/#{@config.screen.line_size}" if $VRB > 0
       glMatrixMode(GL_MODELVIEW)
       glLoadIdentity()
       glTranslate(0.0, 0.0, 0.0)

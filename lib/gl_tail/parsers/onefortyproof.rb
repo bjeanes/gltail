@@ -16,6 +16,10 @@ class OnefortyproofParser < Parser
 
       referrer.gsub!(/http:\/\//,'') if referrer
 
+      if url =~ /favicon.ico/ or url =~ /^\/test\// or url =~ /^\/$/
+        return
+      end
+
       add_activity(:block => 'servers', :name => server.name, :size => size.to_i) # Size of activity based on size of request
 
       short_url = case url
@@ -36,9 +40,13 @@ class OnefortyproofParser < Parser
       end
       add_activity(:block => 'audience', :name => "@#{screen_name}") if screen_name
       
-      publisher = "yankly"
-      if parameters
-        publisher = parameters.split( /^.*publisher_id=([\w\d]+)&/ )[1]
+      publisher = "unspecified"
+      if parameters =~ /publisher_id/
+        publisher = parameters.split( /publisher_id=([\w\d]+)/ )[1].capitalize
+      elsif parameters =~ /app_id/
+        publisher = parameters.split( /app_id=([\w\d]+)/ )[1].capitalize
+      else
+        puts "GOT REQUEST WITH NO app_id OR publisher_id: #{url}"
       end
       add_activity(:block => 'app', :name => publisher) if publisher
 
