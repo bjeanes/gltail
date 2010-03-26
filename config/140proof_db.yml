@@ -1,6 +1,6 @@
 servers:
     carbon:
-        host: carbon.sayplus1.com
+        host: carbon.140proof.com
         port: 22
         user: jm3
         keys: ['/Volumes/Apricot/Crypt/SSH/bubblefusion_rsa']

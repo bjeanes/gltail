@@ -1,7 +1,7 @@
 servers:
 
     argon:
-        host: argon.sayplus1.com
+        host: argon.140proof.com
         port: 22
         user: jm3
         keys: ['/Users/jm3/.ssh/bubblefusion_rsa']
@@ -11,7 +11,7 @@ servers:
         color: cyan
 
     neon:
-        host: neon.sayplus1.com
+        host: neon.140proof.com
         port: 22
         user: jm3
         keys: ['/Users/jm3/.ssh/bubblefusion_rsa']
@@ -21,7 +21,7 @@ servers:
         color: magenta
 
     xenon:
-        host: xenon.sayplus1.com
+        host: xenon.140proof.com
         port: 22
         user: jm3
         keys: ['/Users/jm3/.ssh/bubblefusion_rsa']
@@ -31,7 +31,7 @@ servers:
         color: orange
 
     radon:
-        host: radon.sayplus1.com
+        host: radon.140proof.com
         port: 22
         user: jm3
         keys: ['/Users/jm3/.ssh/bubblefusion_rsa']
