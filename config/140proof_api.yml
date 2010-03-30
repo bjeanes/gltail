@@ -6,7 +6,7 @@ servers:
         user: jm3
         keys: ['/Users/jm3/.ssh/bubblefusion_rsa']
         command: tail -f -n0
-        files: /var/log/apache2/api.140proof.com-access.log
+        files: /var/log/nginx/api.140proof.com-access.log
         parser: onefortyproof
         color: cyan
 
@@ -16,7 +16,7 @@ servers:
         user: jm3
         keys: ['/Users/jm3/.ssh/bubblefusion_rsa']
         command: tail -f -n0
-        files: /var/log/apache2/api.140proof.com-access.log
+        files: /var/log/nginx/api.140proof.com-access.log
         parser: onefortyproof
         color: magenta
 
@@ -26,7 +26,7 @@ servers:
         user: jm3
         keys: ['/Users/jm3/.ssh/bubblefusion_rsa']
         command: tail -f -n0
-        files: /var/log/apache2/api.140proof.com-access.log
+        files: /var/log/nginx/api.140proof.com-access.log
         parser: onefortyproof
         color: orange
 
@@ -36,7 +36,7 @@ servers:
         user: jm3
         keys: ['/Users/jm3/.ssh/bubblefusion_rsa']
         command: tail -f -n0
-        files: /var/log/apache2/api.140proof.com-access.log
+        files: /var/log/nginx/api.140proof.com-access.log
         parser: onefortyproof
         color: pink
 
