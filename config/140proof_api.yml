@@ -18,7 +18,7 @@ servers:
         command: tail -f -n0
         files: /var/log/nginx/api.140proof.com-access.log
         parser: onefortyproof
-        color: magenta
+        color: orange
 
     xenon:
         host: xenon.140proof.com
@@ -28,7 +28,7 @@ servers:
         command: tail -f -n0
         files: /var/log/nginx/api.140proof.com-access.log
         parser: onefortyproof
-        color: orange
+        color: blue
 
     radon:
         host: radon.140proof.com
@@ -38,22 +38,18 @@ servers:
         command: tail -f -n0
         files: /var/log/nginx/api.140proof.com-access.log
         parser: onefortyproof
-        color: pink
+        color: magenta
 
 config:
     dimensions: 1100x600
     min_blob_size: 0.001
     max_blob_size: 0.02
     highlight_color: orange
-    bounce: true
+    bounce: false
     left_column:
         size: 25
         alignment: -0.99
         blocks:
-            impressions:
-                order: 0
-                auto_clean: true
-                show: total
             clicks:
                 order: 1
                 show: total
@@ -68,10 +64,6 @@ config:
                 order: 4
                 color: 1.0, 0.8, 0.4, 1.0
                 show: total
-            requests:
-                order: 5
-                color: 1.0, 0.4, 0.2, 1.0
-                show: total
 
     right_column:
         size: 25
@@ -82,6 +74,7 @@ config:
                 auto_clean: true
             app:
                 order: 1
+                show: total
             platform:
                 order: 2
                 size: 10

@@ -26,6 +26,7 @@ class OnefortyproofParser < Parser
          when %r{/ads/user\.(xml|json)} then 'ad served'
          when %r{/impressions/verify\.(xml|json)} then 'ad shown'
          when %r{/clicks/create\.(xml|json)} then 'ad clicked'
+         when %r{/ads/search\.(xml|json)} then 'search'
          when %r{/test/ads\.(xml|json)} then 'developer test'
          else nil # suppress everything else
        end
