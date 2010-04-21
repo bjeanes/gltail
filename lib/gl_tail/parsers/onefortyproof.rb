@@ -23,10 +23,10 @@ class OnefortyproofParser < Parser
       add_activity(:block => 'servers', :name => server.name, :size => size.to_i) # Size of activity based on size of request
 
       short_url = case url
-         when %r{/ads/user\.(xml|json)} then 'ad served'
+         #when %r{/ads/user\.(xml|json)} then 'ad served'
          when %r{/impressions/verify\.(xml|json)} then 'ad shown'
-         when %r{/clicks/create\.(xml|json)} then 'ad clicked'
-         when %r{/ads/search\.(xml|json)} then 'search'
+         when %r{/clicks/create\.(xml|json)} then 'ads clicked'
+         when %r{/ads/search\.(xml|json)} then 'searches'
          when %r{/test/ads\.(xml|json)} then 'developer test'
          else nil # suppress everything else
        end
@@ -53,26 +53,26 @@ class OnefortyproofParser < Parser
 
       add_activity(:block => 'referrers', :name => referrer) unless (referrer.nil? || referrer_host.nil? || referrer_host.include?(server.name) || referrer_host.include?(server.host))
 
-      ua = useragent || "unknown"
-      ua.gsub!(/\/.*$/, '')
-      ua.gsub!(/Black[Bb]erry(\d+.*$)/, "Blackberry #{$1}")
-      add_activity(:block => 'platform', :name => ua) if ua.include?( 'Black' ) # once you go black...
+      #ua = useragent || "unknown"
+      #ua.gsub!(/\/.*$/, '')
+      #ua.gsub!(/Black[Bb]erry(\d+.*$)/, "Blackberry #{$1}")
+      #add_activity(:block => 'platform', :name => ua) if ua.include?( 'Black' ) # once you go black...
 
-      if( url.include?('.gif') || url.include?('.jpg') || url.include?('.png') || url.include?('.ico'))
-        type = 'image'
-      elsif url.include?('.css')
-        type = 'css'
-      elsif url.include?('.js')
-        type = 'javascript'
-      elsif url.include?('.swf')
-        type = 'flash'
-      elsif( url.include?('.avi') || url.include?('.ogm') || url.include?('.flv') || url.include?('.mpg') )
-        type = 'movie'
-      elsif( url.include?('.mp3') || url.include?('.wav') || url.include?('.fla') || url.include?('.aac') || url.include?('.ogg'))
-        type = 'music'
-      else
-        type = 'page'
-      end
+      #if( url.include?('.gif') || url.include?('.jpg') || url.include?('.png') || url.include?('.ico'))
+        #type = 'image'
+      #elsif url.include?('.css')
+        #type = 'css'
+      #elsif url.include?('.js')
+        #type = 'javascript'
+      #elsif url.include?('.swf')
+        #type = 'flash'
+      #elsif( url.include?('.avi') || url.include?('.ogm') || url.include?('.flv') || url.include?('.mpg') )
+        #type = 'movie'
+      #elsif( url.include?('.mp3') || url.include?('.wav') || url.include?('.fla') || url.include?('.aac') || url.include?('.ogg'))
+        #type = 'music'
+      #else
+        #type = 'page'
+      #end
 
       add_activity(:block => 'impressions', :name => 'Raw') if url.include?('/ads/user.')
       add_activity(:block => 'impressions', :name => 'Verified') if url.include?('/impressions/verify.')
