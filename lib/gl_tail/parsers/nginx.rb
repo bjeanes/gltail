@@ -3,16 +3,18 @@
 #
 # Licensed under the GNU General Public License v2 (see LICENSE)
 #
-
+require "ruby-debug"
 # Parser which handles nginx logs
 class NginxParser < Parser
   def parse( line )
-    _, remote_addr, remote_user, status, request, size, referrer, http_user_agent, http_x_forwarded_for = /^([^\s]+) - ([^\s]+) \[.*\] (\d+) \"(.+)\" (\d+) \"(.*)\" \"([^\"]*)\" \"(.*)\"/.match(line).to_a
+
+    # 75.4.139.39 - - [19/Oct/2010:01:39:08 +0000] "GET /workplaces/142-chicago-startup-foundry HTTP/1.1" 200 12940 "http://desksnear.me/search?q=Wilmette%2C+United+States" "Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US) AppleWebKit/534.3 (KHTML, like Gecko) Chrome/6.0.472.63 Safari/534.3"
+
+    _, remote_addr, method, request, status, size, referrer, http_user_agent = /^([\d.]+) - - \[[^\]]+\] "(GET|POST|PUT|DELETE|HEAD) ([^"]+)" (\d{3}) (\d+) "([^"]+)" "([^"]+)"/.match(line).to_a
 
     if request
       _, referrer_host, referrer_url = /^http[s]?:\/\/([^\/]+)(\/.*)/.match(referrer).to_a if referrer
-      method, full_url, _ = request.split(' ')
-      url, parameters = full_url.split('?')
+      url, parameters = request.split('?')
 
       add_activity(:block => 'sites', :name => server.name, :size => size.to_i)
       add_activity(:block => 'urls', :name => url)
